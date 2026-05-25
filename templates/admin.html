@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024">
+    <title>Admin Dashboard | Suman M</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; color: #1e293b; margin: 0; padding: 0; }
+        .admin-nav { background: #0f172a; color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;}
+        .admin-nav .brand { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .admin-nav .brand i { color: #38bdf8; font-size: 1.5rem; }
+        .admin-nav-links { display: flex; gap: 20px; align-items: center; }
+        .admin-nav-links a { color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s; display: flex; align-items: center; gap: 5px;}
+        .admin-nav-links a:hover { color: white; }
+        .btn-logout { background: #ef4444; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; transition: background 0.3s; }
+        .btn-logout:hover { background: #dc2626; color: white;}
+        .admin-container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 90%; max-width: 800px; margin: 40px auto; }
+        h2 { color: #2563eb; margin-top: 0; }
+        h3 { border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 40px; margin-bottom: 20px; color: #0f172a;}
+        .form-group { margin-bottom: 20px; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #334155;}
+        input[type="text"], input[type="password"], textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; font-family: 'Poppins', sans-serif; font-size: 0.95rem;}
+        textarea { resize: vertical; min-height: 150px; } 
+        button { background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: 0.3s; width: 100%;}
+        button:hover { background: #1d4ed8; }
+        .btn-delete { background: #ef4444; padding: 8px 15px; font-size: 0.9rem; width: auto;}
+        .btn-delete:hover { background: #dc2626; }
+        .btn-add { background: #10b981; margin-top: 10px;}
+        .btn-add:hover { background: #059669; }
+        .project-item { display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+        .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f1f5f9; }
+        .login-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
+        
+        /* Visitor Log Styles */
+        .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 10px;}
+        .btn-clear-logs { background: #f87171; color: white; border: none; padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; width: auto;}
+        .btn-clear-logs:hover { background: #ef4444; }
+    </style>
+</head>
+<body>
+    {% if not logged_in %}
+    <div class="login-wrapper">
+        <div class="login-box">
+            <h2><i class='bx bx-lock-alt'></i> Admin Access</h2>
+            <form method="POST" action="/admin">
+                <input type="password" name="password" required placeholder="Enter admin password..." style="margin-bottom: 20px;">
+                <button type="submit">Log In</button>
+            </form>
+            <div style="margin-top: 20px;"><a href="/" style="color: #64748b; text-decoration: none;">← Return to Live Site</a></div>
+        </div>
+    </div>
+    {% else %}
+    <nav class="admin-nav">
+        <div class="brand"><i class='bx bxs-dashboard'></i> Dashboard</div>
+        <div class="admin-nav-links">
+            <a href="/"><i class='bx bx-globe'></i> View Live Site</a>
+            <a href="/logout" class="btn-logout"><i class='bx bx-log-out'></i> Logout</a>
+        </div>
+    </nav>
+    <div class="admin-container">
+        <h2>Welcome, Suman.</h2>
+        <p style="color: #64748b; margin-bottom: 30px;">Manage your portfolio content here. Changes apply immediately.</p>
+        
+        <form method="POST" action="/admin">
+            <h3><i class='bx bx-slider'></i> General Settings</h3>
+            <div class="form-group">
+                <label>About Me (Type 1., 2., 3. on new lines!)</label>
+                <textarea name="about_text" required>{{ data.about_text }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Instagram URL (Top Nav)</label>
+                <input type="text" name="insta_link" value="{{ data.insta_link }}" required>
+            </div>
+            
+            <h3><i class='bx bx-link'></i> Key Focus / Tool Links</h3>
+            <div class="form-group">
+                <label>Tool/Link 1</label>
+                <input type="text" name="focus_1_title" value="{{ data.focus_1_title }}" placeholder="Title" required>
+                <input type="text" name="focus_1_desc" value="{{ data.focus_1_desc }}" placeholder="Description" required>
+                <input type="text" name="focus_1_link" value="{{ data.focus_1_link }}" placeholder="URL (e.g. https://...)" required>
+            </div>
+            <div class="form-group">
+                <label>Tool/Link 2</label>
+                <input type="text" name="focus_2_title" value="{{ data.focus_2_title }}" placeholder="Title" required>
+                <input type="text" name="focus_2_desc" value="{{ data.focus_2_desc }}" placeholder="Description" required>
+                <input type="text" name="focus_2_link" value="{{ data.focus_2_link }}" placeholder="URL (e.g. https://...)" required>
+            </div>
+            <button type="submit"><i class='bx bx-save'></i> Save General Settings</button>
+        </form>
+
+        <h3><i class='bx bx-code-block'></i> Manage Recent Projects</h3>
+        {% for i in range(data.projects|length) %}
+        <div class="project-item">
+            <div>
+                <strong style="color: #0f172a; font-size: 1.1rem;">{{ data.projects[i].name }}</strong><br>
+                <small style="color: #64748b;">{{ data.projects[i].link }}</small>
+            </div>
+            <form action="/delete_project/{{ i }}" method="POST" style="margin: 0;">
+                <button type="submit" class="btn-delete"><i class='bx bx-trash'></i> Delete</button>
+            </form>
+        </div>
+        {% endfor %}
+
+        <form action="/add_project" method="POST" style="background: #f0fdf4; padding: 25px; border-radius: 10px; margin-top: 30px; border: 2px dashed #86efac;">
+            <h4 style="margin-top: 0; margin-bottom: 15px; color: #166534;"><i class='bx bx-plus-circle'></i> Add New Project</h4>
+            <input type="text" name="name" placeholder="Project Title" required>
+            <textarea name="desc" placeholder="Short Project Description" required style="min-height: 60px;"></textarea>
+            <input type="text" name="link" placeholder="Project URL (e.g. https://github.com/...)" required>
+            <button type="submit" class="btn-add">Add Project</button>
+        </form>
+
+        <div style="background: #1e293b; padding: 20px; border-radius: 12px; margin-top: 50px; color: white;">
+            <div class="log-header">
+                <h3 style="margin: 0; color: white; border: none;"><i class='bx bx-radar'></i> Live Visitor Logs</h3>
+                <form action="/delete_logs" method="POST" onsubmit="return confirm('Clear all visitor history?');">
+                    <button type="submit" class="btn-clear-logs"><i class='bx bx-trash'></i> Clear All Logs</button>
+                </form>
+            </div>
+            
+            <div style="max-height: 400px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem;">
+                {% if data.visitors %}
+                    {% for visitor in data.visitors %}
+                        <div style="padding: 12px; border-bottom: 1px solid #334155; line-height: 1.6;">
+                            <span style="color: #60a5fa;">[{{ visitor.time }}]</span><br>
+                            <strong>IP:</strong> {{ visitor.ip }} | 
+                            <strong>Hardware:</strong> <span style="color: #f59e0b;">{{ visitor.device }}</span> | 
+                            <strong>OS:</strong> {{ visitor.os }} | 
+                            <span style="color: #34d399;">[{{ visitor.type }}]</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #94a3b8; text-align: center; padding: 20px;">No visitors logged yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+</body>
+</html>
