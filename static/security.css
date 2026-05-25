@@ -1,0 +1,36 @@
+body{
+  user-select:none;
+}
+
+img{
+  pointer-events:none;
+  -webkit-user-drag:none;
+}
+
+.protect{
+  position:relative;
+  display:inline-block;
+}
+
+.protect::after{
+  content:"";
+  position:absolute;
+  inset:0;
+}
+
+@media print{
+  body{
+    display:none !important;
+  }
+}
+body::after{
+  content:"Suman M - Portfolio";
+  position:fixed;
+  top:40%;
+  left:30%;
+  font-size:40px;
+  color:rgba(255,255,255,0.15);
+  transform:rotate(-30deg);
+  pointer-events:none;
+  z-index:9999;
+}
